@@ -1,11 +1,16 @@
-import { LoginForm } from "./components/login-form"
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/Login";
 
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <LoginForm />
-    </div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

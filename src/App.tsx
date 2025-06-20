@@ -1,9 +1,9 @@
-import { Clock } from "./components/Clock";
+import { LoginForm } from "./components/LoginForm";
 
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Clock />
+    <div className="min-h-screen">
+      <LoginForm />
     </div>
   );
 }

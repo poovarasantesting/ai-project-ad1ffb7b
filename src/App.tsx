@@ -1,29 +1,21 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
-import Dashboard from "@/pages/Dashboard";
-import { AuthProvider } from "@/context/AuthContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import Register from "./pages/auth/Register";
+import Login from "./pages/auth/Login";
+import Dashboard from "./pages/Dashboard";
 
-export default function App() {
+function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } 
-          />
-        </Routes>
-        <Toaster />
-      </AuthProvider>
+      <Routes>
+        <Route path="/" element={<Navigate to="/auth/login" replace />} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+      <Toaster />
     </BrowserRouter>
   );
 }
+
+export default App;

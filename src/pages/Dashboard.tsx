@@ -1,138 +1,81 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/context/AuthContext";
-import { UserIcon, Home, Settings, LogOut } from "lucide-react";
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
-  const { toast } = useToast();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("home");
+  const { toast } = useToast();
 
   useEffect(() => {
-    // If there's no user, redirect to login
-    if (!user) {
-      navigate("/");
+    // Check if user is authenticated
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      navigate("/auth/login");
+    } else {
+      setIsAuthenticated(true);
     }
-  }, [user, navigate]);
+  }, [navigate]);
 
   const handleLogout = () => {
-    logout();
+    localStorage.removeItem("auth_token");
     toast({
-      title: "Logged out",
-      description: "You have been logged out successfully.",
+      title: "Logged out successfully",
+      description: "You have been logged out of your account.",
     });
-    navigate("/");
+    navigate("/auth/login");
   };
 
-  if (!user) return null;
+  if (!isAuthenticated) {
+    return null; // Prevent flash of content before redirect
+  }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <div className="w-64 bg-white border-r shadow-sm">
-        <div className="p-6">
-          <div className="flex items-center space-x-3">
-            <div className="bg-blue-100 p-2 rounded-full">
-              <UserIcon className="h-6 w-6 text-blue-600" />
-            </div>
-            <div>
-              <h2 className="font-medium">{user.name}</h2>
-              <p className="text-sm text-gray-500">{user.email}</p>
-            </div>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Dashboard</h1>
+            <p className="text-gray-500">Welcome to your account dashboard</p>
           </div>
+          <Button variant="outline" onClick={handleLogout}>
+            Sign out
+          </Button>
         </div>
-        <nav className="px-3 py-2 space-y-1">
-          <button
-            onClick={() => setActiveTab("home")}
-            className={`flex items-center space-x-3 w-full px-3 py-2 rounded-md ${
-              activeTab === "home" ? "bg-blue-50 text-blue-600" : "hover:bg-gray-100"
-            }`}
-          >
-            <Home className="h-5 w-5" />
-            <span>Home</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("settings")}
-            className={`flex items-center space-x-3 w-full px-3 py-2 rounded-md ${
-              activeTab === "settings" ? "bg-blue-50 text-blue-600" : "hover:bg-gray-100"
-            }`}
-          >
-            <Settings className="h-5 w-5" />
-            <span>Settings</span>
-          </button>
-          <button
-            onClick={handleLogout}
-            className="flex items-center space-x-3 w-full px-3 py-2 rounded-md text-red-600 hover:bg-red-50"
-          >
-            <LogOut className="h-5 w-5" />
-            <span>Logout</span>
-          </button>
-        </nav>
-      </div>
 
-      {/* Main content */}
-      <div className="flex-1 p-8">
-        <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-        
-        {activeTab === "home" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Welcome back, {user.name}!</CardTitle>
-                <CardDescription>
-                  This is your personal dashboard. You can manage your settings and view your profile here.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Your account was created successfully.</p>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline">View More</Button>
-              </CardFooter>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Stats</CardTitle>
-                <CardDescription>
-                  Here's a summary of your account activity
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>Login Status:</span>
-                    <span className="font-medium text-green-600">Active</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Account Type:</span>
-                    <span className="font-medium">Standard</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {activeTab === "settings" && (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader>
-              <CardTitle>Account Settings</CardTitle>
-              <CardDescription>
-                Manage your account settings and preferences
-              </CardDescription>
+              <CardTitle>Profile</CardTitle>
+              <CardDescription>Manage your personal information</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-500">
-                Settings functionality would be implemented here. This is just a placeholder.
-              </p>
+              <Button variant="outline" className="w-full">View Profile</Button>
             </CardContent>
           </Card>
-        )}
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Settings</CardTitle>
+              <CardDescription>Customize your account preferences</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" className="w-full">Account Settings</Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Activity</CardTitle>
+              <CardDescription>View your recent account activity</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" className="w-full">View Activity</Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

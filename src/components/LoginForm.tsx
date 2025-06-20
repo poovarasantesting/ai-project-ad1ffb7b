@@ -1,10 +1,12 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+"use client"
 
-import { Button } from "@/components/ui/button";
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -12,53 +14,50 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 
-const loginSchema = z.object({
+const loginFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters" }),
-});
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters" }),
+})
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+type LoginFormValues = z.infer<typeof loginFormSchema>
 
 export function LoginForm() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const { toast } = useToast();
-
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  
   const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
       email: "",
       password: "",
     },
-  });
+  })
 
-  function onSubmit(values: LoginFormValues) {
-    setIsLoading(true);
-    console.log("Login form values:", values);
+  function onSubmit(data: LoginFormValues) {
+    setIsLoading(true)
     
     // Simulate API call
+    console.log("Login attempt with:", data)
+    
     setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Login Successful",
-        description: "Welcome back!",
-      });
-    }, 1500);
+      // Handle login success (would typically redirect)
+      console.log("Login successful!")
+      setIsLoading(false)
+    }, 1500)
   }
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-6 p-6 bg-white dark:bg-gray-950 rounded-lg shadow-md">
+    <div className="mx-auto max-w-md space-y-6 p-6 bg-white rounded-lg shadow-md">
       <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-bold">Login to your account</h1>
-        <p className="text-gray-500 dark:text-gray-400">
-          Enter your credentials to sign in
-        </p>
+        <h1 className="text-3xl font-bold">Login</h1>
+        <p className="text-gray-500">Enter your credentials to access your account</p>
       </div>
-      
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -69,7 +68,7 @@ export function LoginForm() {
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder="example@email.com" 
+                    placeholder="you@example.com" 
                     type="email" 
                     autoComplete="email"
                     {...field} 
@@ -79,66 +78,61 @@ export function LoginForm() {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <div className="relative">
+                <div className="relative">
+                  <FormControl>
                     <Input
                       placeholder="••••••••"
                       type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
                       {...field}
                     />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-500" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-gray-500" />
-                      )}
-                      <span className="sr-only">
-                        {showPassword ? "Hide password" : "Show password"}
-                      </span>
-                    </Button>
-                  </div>
-                </FormControl>
+                  </FormControl>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 py-2"
+                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-500" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-500" />
+                    )}
+                    <span className="sr-only">
+                      {showPassword ? "Hide password" : "Show password"}
+                    </span>
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <input
                 type="checkbox"
                 id="remember"
-                className="h-4 w-4 rounded border-gray-300"
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
-              <label
-                htmlFor="remember"
-                className="text-sm text-gray-600 dark:text-gray-400"
-              >
+              <label htmlFor="remember" className="text-sm text-gray-600">
                 Remember me
               </label>
             </div>
-            <a
-              href="#"
-              className="text-sm font-medium text-primary hover:text-primary/80"
-            >
+            <a href="#" className="text-sm text-primary hover:underline">
               Forgot password?
             </a>
           </div>
-          
+
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? (
               <>
@@ -146,18 +140,18 @@ export function LoginForm() {
                 Logging in...
               </>
             ) : (
-              "Sign in"
+              "Log in"
             )}
           </Button>
         </form>
       </Form>
-      
+
       <div className="mt-4 text-center text-sm">
         Don't have an account?{" "}
-        <a href="#" className="font-medium text-primary hover:text-primary/80">
+        <a href="#" className="text-primary hover:underline">
           Sign up
         </a>
       </div>
     </div>
-  );
+  )
 }

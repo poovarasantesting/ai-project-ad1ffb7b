@@ -1,10 +1,16 @@
-import { LoginForm } from "./components/LoginForm";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
+import LoginPage from "@/pages/login";
 
 function App() {
   return (
-    <div className="min-h-screen">
-      <LoginForm />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<div>Home Page</div>} />
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+      <Toaster />
+    </BrowserRouter>
   );
 }
 

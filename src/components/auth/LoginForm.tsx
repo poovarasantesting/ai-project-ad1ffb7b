@@ -2,17 +2,9 @@ import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -21,48 +13,47 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Eye, EyeOff } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Validation schema
-const loginSchema = z.object({
+const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters" }),
 });
 
-type LoginFormValues = z.infer<typeof loginSchema>;
-
 export function LoginForm() {
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { toast } = useToast();
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  function onSubmit(data: LoginFormValues) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     
-    // Simulate login API call
+    // Simulate API call
+    console.log("Login attempt:", values);
+    
     setTimeout(() => {
-      console.log("Login data:", data);
-      toast({
-        title: "Login Successful",
-        description: "You have been logged in successfully.",
-      });
       setIsLoading(false);
+      // For demo purposes - in a real app, you'd verify credentials with a backend
+      toast({
+        title: "Login successful",
+        description: "Welcome back!",
+      });
     }, 1500);
   }
 
   return (
     <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl font-bold">Login</CardTitle>
         <CardDescription>
           Enter your credentials to access your account
         </CardDescription>
@@ -78,10 +69,9 @@ export function LoginForm() {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Enter your email" 
                       type="email" 
+                      placeholder="you@example.com" 
                       {...field} 
-                      disabled={isLoading}
                     />
                   </FormControl>
                   <FormMessage />
@@ -97,10 +87,9 @@ export function LoginForm() {
                   <FormControl>
                     <div className="relative">
                       <Input
-                        placeholder="Enter your password"
                         type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
                         {...field}
-                        disabled={isLoading}
                       />
                       <Button
                         type="button"
@@ -124,25 +113,39 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
+            <div className="flex justify-between items-center">
+              <Button 
+                type="button" 
+                variant="link" 
+                className="px-0 font-normal"
+                onClick={() => console.log("Forgot password clicked")}
+              >
+                Forgot password?
+              </Button>
+            </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Logging in...
+                </>
+              ) : (
+                "Login"
+              )}
             </Button>
+            <div className="text-center text-sm">
+              Don't have an account?{" "}
+              <Button 
+                variant="link" 
+                className="p-0 font-normal" 
+                onClick={() => console.log("Sign up clicked")}
+              >
+                Sign up
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex flex-col space-y-2">
-        <div className="text-sm text-center">
-          <a href="#" className="text-primary hover:underline">
-            Forgot your password?
-          </a>
-        </div>
-        <div className="text-sm text-center">
-          Don't have an account?{" "}
-          <a href="#" className="text-primary hover:underline">
-            Sign up
-          </a>
-        </div>
-      </CardFooter>
     </Card>
   );
 }

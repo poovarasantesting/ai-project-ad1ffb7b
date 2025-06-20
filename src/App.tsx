@@ -1,14 +1,14 @@
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/Login";
+import { Toaster } from "@/components/ui/toaster";
+import Register from "./pages/Register";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<Register />} />
       </Routes>
+      <Toaster />
     </BrowserRouter>
   );
 }

@@ -1,17 +1,11 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Toaster } from "@/components/ui/toaster";
-import RegisterPage from "@/pages/Register";
+import { LoginForm } from "./components/login-form"
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<RegisterPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Routes>
-      <Toaster />
-    </BrowserRouter>
-  );
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <LoginForm />
+    </div>
+  )
 }
 
-export default App;
+export default App

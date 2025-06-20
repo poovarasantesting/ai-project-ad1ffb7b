@@ -1,12 +1,16 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/Login";
+import { Toaster } from "sonner";
+
+import Login from "./pages/Login";
 
 export default function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-right" />
       <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        {/* Add other routes as needed */}
       </Routes>
     </BrowserRouter>
   );
